@@ -84,6 +84,7 @@ export default function AdminDashboard({
   const handleLogout = async () => {
     await adminLogout();
     setUser(null);
+    onClose();
   };
 
   const openAddProductModal = () => {
@@ -359,7 +360,7 @@ export default function AdminDashboard({
       {/* Sidebar */}
       <aside className="admin-sidebar">
         <div className="admin-sidebar-header">
-          <img src="/logo.jpeg" alt="Logo" style={{ height: '35px', borderRadius: '4px' }} />
+          <img src="/logo.png" alt="Logo" style={{ height: '42px', width: 'auto' }} />
           <div>
             <h2>SEKAOS PANEL</h2>
             <span style={{ fontSize: '0.75rem', color: '#38bdf8', fontWeight: 600 }}>

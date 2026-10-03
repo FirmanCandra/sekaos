@@ -1,6 +1,6 @@
 import React from 'react';
 
-export default function Footer({ onOpenAdmin, settings }) {
+export default function Footer({ settings }) {
   const scrollTo = (id) => {
     const el = document.getElementById(id);
     if (el) {
@@ -17,9 +17,8 @@ export default function Footer({ onOpenAdmin, settings }) {
       <div className="container">
         <div className="footer-content">
           <div className="footer-logo">
-            <div style={{ display: 'flex', gap: '5px', alignItems: 'center', fontSize: '1.6rem', fontWeight: 800 }}>
+            <div style={{ display: 'flex', gap: '8px', alignItems: 'center', fontSize: '1.8rem', fontWeight: 800 }}>
               <span className="logo-bold" style={{ color: 'white' }}>SEKAOS</span>
-              <span className="logo-light" style={{ color: '#94a3b8' }}>PROJECT</span>
             </div>
             <p className="mt-2">
               Vendor Konveksi Terpercaya untuk Event & Organisasi. Mitra solusi lengkap untuk kebutuhan pakaian custom Anda di Semarang & sekitarnya.
@@ -29,18 +28,11 @@ export default function Footer({ onOpenAdmin, settings }) {
           <div className="footer-links">
             <h3>Menu Cepat</h3>
             <ul>
-              <li><button onClick={() => scrollTo('video-bumper')}>Video Bumper</button></li>
+              <li><button onClick={() => scrollTo('home')}>Beranda</button></li>
               <li><button onClick={() => scrollTo('konveksi')}>Layanan Konveksi</button></li>
               <li><button onClick={() => scrollTo('katalog')}>Katalog Produk</button></li>
               <li><button onClick={() => scrollTo('portofolio')}>Portofolio</button></li>
-              <li>
-                <button
-                  onClick={onOpenAdmin}
-                  style={{ color: '#38bdf8', fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: '6px' }}
-                >
-                  <i className="fas fa-lock"></i> Portal Admin
-                </button>
-              </li>
+              <li><button onClick={() => scrollTo('contact')}>Kontak</button></li>
             </ul>
           </div>
 
@@ -53,7 +45,7 @@ export default function Footer({ onOpenAdmin, settings }) {
         </div>
 
         <div className="footer-bottom">
-          <p>&copy; {new Date().getFullYear()} SEKAOS PROJECT. All rights reserved.</p>
+          <p>&copy; {new Date().getFullYear()} SEKAOS. All rights reserved.</p>
         </div>
       </div>
     </footer>

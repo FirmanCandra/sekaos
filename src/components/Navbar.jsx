@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-export default function Navbar({ activePage, setActivePage, onOpenAdmin }) {
+export default function Navbar({ activePage, setActivePage }) {
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -26,17 +26,20 @@ export default function Navbar({ activePage, setActivePage, onOpenAdmin }) {
   return (
     <header className={`navbar ${scrolled ? 'scrolled' : ''}`}>
       <div className="container nav-container">
-        <div className="logo" onClick={() => { setActivePage('home'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}>
+        <div
+          className="logo"
+          onClick={() => { setActivePage('home'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+          style={{ display: 'flex', alignItems: 'center', gap: '12px', cursor: 'pointer' }}
+        >
           <img
-            src="/logo.jpeg"
-            alt="Sekaos Project Logo"
-            style={{ height: '40px', width: 'auto', marginRight: '10px', borderRadius: '4px' }}
-            onError={(e) => { e.currentTarget.style.display = 'none'; }}
+            src="/logo.png"
+            alt="Sekaos Logo"
+            style={{ height: '52px', width: 'auto', display: 'block', objectFit: 'contain' }}
+            onError={(e) => { e.currentTarget.src = '/logo.jpeg'; }}
           />
-          <div style={{ display: 'flex', gap: '5px', alignItems: 'center' }}>
-            <span className="logo-bold">SEKAOS</span>
-            <span className="logo-light">PROJECT</span>
-          </div>
+          <span className="logo-bold" style={{ fontSize: '1.9rem', letterSpacing: '0.5px' }}>
+            SEKAOS
+          </span>
         </div>
 
         <nav>
@@ -44,11 +47,6 @@ export default function Navbar({ activePage, setActivePage, onOpenAdmin }) {
             <li>
               <button onClick={() => { setActivePage('home'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}>
                 Beranda
-              </button>
-            </li>
-            <li>
-              <button onClick={() => handleNavClick('video-bumper')}>
-                Video Bumper
               </button>
             </li>
             <li>
@@ -61,26 +59,7 @@ export default function Navbar({ activePage, setActivePage, onOpenAdmin }) {
                 className="nav-btn-katalog"
                 onClick={() => handleNavClick('katalog')}
               >
-                <i className="fas fa-layer-group"></i> Katalog Produk
-              </button>
-            </li>
-            <li>
-              <button onClick={() => handleNavClick('portofolio')}>
-                Portofolio
-              </button>
-            </li>
-            <li>
-              <button onClick={() => handleNavClick('contact')}>
-                Kontak
-              </button>
-            </li>
-            <li>
-              <button
-                onClick={() => { setMobileMenuOpen(false); onOpenAdmin(); }}
-                style={{ color: '#64748b', fontSize: '0.8rem', display: 'inline-flex', alignItems: 'center', gap: '4px' }}
-                title="Admin Dashboard Portal"
-              >
-                <i className="fas fa-user-shield"></i> Admin
+                <i className="fas fa-layer-group"></i> Katalog
               </button>
             </li>
           </ul>

@@ -1,30 +1,24 @@
 import React, { useState, useMemo } from 'react';
 import { generateWhatsAppLink } from '../services/dataService';
 
-export default function CatalogSection({ products, categories, settings, onSelectProduct }) {
-  const [selectedCategory, setSelectedCategory] = useState('all');
+export default function CatalogSection({ products, settings, onSelectProduct }) {
   const [searchQuery, setSearchQuery] = useState('');
 
   const filteredProducts = useMemo(() => {
     return products.filter((item) => {
       if (!item.is_active) return false;
 
-      // Filter category
-      const matchCat =
-        selectedCategory === 'all' ||
-        String(item.category_id) === String(selectedCategory);
-
-      // Search query
+      // Filter pencarian
       const query = searchQuery.toLowerCase().trim();
-      const matchSearch =
-        !query ||
+      if (!query) return true;
+
+      return (
         item.name.toLowerCase().includes(query) ||
         (item.material_specs && item.material_specs.toLowerCase().includes(query)) ||
-        (item.description && item.description.toLowerCase().includes(query));
-
-      return matchCat && matchSearch;
+        (item.description && item.description.toLowerCase().includes(query))
+      );
     });
-  }, [products, selectedCategory, searchQuery]);
+  }, [products, searchQuery]);
 
   return (
     <section className="catalog-section" id="katalog">
@@ -37,8 +31,8 @@ export default function CatalogSection({ products, categories, settings, onSelec
           </p>
         </div>
 
-        {/* Search & Category Filter */}
-        <div className="catalog-header-actions">
+        {/* Search Box Saja (Kategori dihapus sesuai permintaan) */}
+        <div className="catalog-header-actions" style={{ marginBottom: '35px' }}>
           <div className="catalog-search-box">
             <i className="fas fa-search catalog-search-icon"></i>
             <input
@@ -61,29 +55,11 @@ export default function CatalogSection({ products, categories, settings, onSelec
                   cursor: 'pointer',
                   color: '#94a3b8'
                 }}
+                aria-label="Bersihkan pencarian"
               >
                 <i className="fas fa-times-circle"></i>
               </button>
             )}
-          </div>
-
-          <div className="catalog-filter-tabs">
-            <button
-              className={`filter-tab ${selectedCategory === 'all' ? 'active' : ''}`}
-              onClick={() => setSelectedCategory('all')}
-            >
-              Semua Produk
-            </button>
-            {categories.map((cat) => (
-              <button
-                key={cat.id}
-                className={`filter-tab ${String(selectedCategory) === String(cat.id) ? 'active' : ''}`}
-                onClick={() => setSelectedCategory(cat.id)}
-              >
-                <i className={cat.icon || 'fas fa-tag'} style={{ marginRight: '6px' }}></i>
-                {cat.name}
-              </button>
-            ))}
           </div>
         </div>
 
@@ -101,11 +77,11 @@ export default function CatalogSection({ products, categories, settings, onSelec
             <i className="fas fa-box-open" style={{ fontSize: '3.5rem', color: '#cbd5e1', marginBottom: '15px' }}></i>
             <h3 style={{ color: '#475569', marginBottom: '8px' }}>Tidak Ada Produk Ditemukan</h3>
             <p style={{ color: '#94a3b8', marginBottom: '20px' }}>
-              Coba gunakan kata kunci pencarian lain atau pilih kategori yang berbeda.
+              Coba gunakan kata kunci pencarian pakaian atau bahan lainnya.
             </p>
             <button
               className="btn btn-primary"
-              onClick={() => { setSelectedCategory('all'); setSearchQuery(''); }}
+              onClick={() => setSearchQuery('')}
             >
               Tampilkan Semua Produk
             </button>
@@ -117,11 +93,7 @@ export default function CatalogSection({ products, categories, settings, onSelec
 
               return (
                 <div key={prod.id} className="product-card">
-                  {prod.is_featured && (
-                    <div className="product-badge-featured">
-                      <i className="fas fa-star"></i> Unggulan
-                    </div>
-                  )}
+                  {/* Badge Unggulan telah dihapus sesuai permintaan */}
 
                   <div
                     className="product-card-img-wrapper"

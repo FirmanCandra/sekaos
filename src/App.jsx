@@ -18,9 +18,33 @@ export default function App() {
   const [categories, setCategories] = useState([]);
   const [settings, setSettings] = useState({});
   const [selectedProduct, setSelectedProduct] = useState(null);
-  const [showAdmin, setShowAdmin] = useState(false);
   const [activePage, setActivePage] = useState('home');
   const [loading, setLoading] = useState(true);
+
+  // Helper untuk cek apakah URL saat ini adalah /login atau /admin
+  const checkIsAdminPath = () => {
+    const path = window.location.pathname.toLowerCase();
+    const hash = window.location.hash.toLowerCase();
+    return (
+      path === '/login' ||
+      path === '/admin' ||
+      path === '/login/' ||
+      path === '/admin/' ||
+      hash === '#login' ||
+      hash === '#admin'
+    );
+  };
+
+  const [showAdmin, setShowAdmin] = useState(checkIsAdminPath());
+
+  useEffect(() => {
+    // Dengarkan perubahan URL / tombol back-forward browser
+    const handleLocationChange = () => {
+      setShowAdmin(checkIsAdminPath());
+    };
+    window.addEventListener('popstate', handleLocationChange);
+    return () => window.removeEventListener('popstate', handleLocationChange);
+  }, []);
 
   useEffect(() => {
     async function loadData() {
@@ -42,6 +66,12 @@ export default function App() {
     loadData();
   }, []);
 
+  // Navigasi keluar dari Admin Dashboard kembali ke landing page /
+  const handleCloseAdmin = () => {
+    setShowAdmin(false);
+    window.history.pushState({}, '', '/');
+  };
+
   if (loading) {
     return (
       <div style={{
@@ -53,20 +83,19 @@ export default function App() {
         backgroundColor: '#0f172a',
         color: '#fff'
       }}>
-        <div style={{ display: 'flex', gap: '5px', alignItems: 'center', fontSize: '2rem', fontWeight: 800, marginBottom: '20px' }}>
-          <span style={{ color: '#38bdf8' }}>SEKAOS</span>
-          <span style={{ color: '#fff' }}>PROJECT</span>
+        <div style={{ display: 'flex', gap: '10px', alignItems: 'center', fontSize: '2.5rem', fontWeight: 800, marginBottom: '15px' }}>
+          <span style={{ color: '#1a365d', background: '#fff', padding: '4px 12px', borderRadius: '8px' }}>SEKAOS</span>
         </div>
         <p style={{ color: '#94a3b8' }}>Memuat katalog konveksi...</p>
       </div>
     );
   }
 
-  // Jika sedang membuka Admin Dashboard Portal
+  // Jika URL diketik /login atau /admin, tampilkan Admin Dashboard
   if (showAdmin) {
     return (
       <AdminDashboard
-        onClose={() => setShowAdmin(false)}
+        onClose={handleCloseAdmin}
         products={products}
         setProducts={setProducts}
         categories={categories}
@@ -76,13 +105,12 @@ export default function App() {
     );
   }
 
-  // Tampilan Publik: Landing Page Asli + Fitur Showcase Katalog Dinamis
+  // Tampilan Landing Page Publik
   return (
     <div className="sekaos-app">
       <Navbar
         activePage={activePage}
         setActivePage={setActivePage}
-        onOpenAdmin={() => setShowAdmin(true)}
       />
 
       <Hero settings={settings} />
@@ -93,7 +121,6 @@ export default function App() {
 
       <CatalogSection
         products={products}
-        categories={categories}
         settings={settings}
         onSelectProduct={(p) => setSelectedProduct(p)}
       />
@@ -106,10 +133,7 @@ export default function App() {
 
       <MapSection settings={settings} />
 
-      <Footer
-        onOpenAdmin={() => setShowAdmin(true)}
-        settings={settings}
-      />
+      <Footer settings={settings} />
 
       <ProductModal
         product={selectedProduct}
