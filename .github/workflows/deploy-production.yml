@@ -1,0 +1,66 @@
+name: CD - Production Release & Deploy
+
+on:
+  push:
+    branches: [ production ]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    name: Production Release & Deployment
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 22.x
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'npm'
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Build Production Bundle
+        env:
+          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL || 'https://placeholder.supabase.co' }}
+          VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY || 'placeholder-anon-key' }}
+        run: npm run build
+
+      - name: Verify Build Artifacts
+        run: |
+          test -f dist/index.html || (echo "❌ index.html not found!" && exit 1)
+          test -f dist/.htaccess || (echo "❌ .htaccess not found!" && exit 1)
+          echo "✅ Production artifacts verified successfully."
+
+      - name: Upload Production Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: sekaos-production-dist
+          path: dist/
+          retention-days: 30
+
+      # Optional FTP Auto-Deploy jika user mengisi GitHub Secrets (FTP_SERVER, FTP_USERNAME, FTP_PASSWORD)
+      - name: Deploy to Hostinger via FTP (Conditional)
+        if: ${{ env.FTP_SERVER != '' }}
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        env:
+          FTP_SERVER: ${{ secrets.FTP_SERVER }}
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          local-dir: dist/
+          server-dir: public_html/
+          dangerous-clean-slate: false
+
+      - name: Deployment Summary Report
+        run: |
+          echo "### 🚀 Production Deployment Report" >> $GITHUB_STEP_SUMMARY
+          echo "- **Commit:** \`${{ github.sha }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "- **Branch:** \`production\`" >> $GITHUB_STEP_SUMMARY
+          echo "- **Status:** ✅ Build & Production Package Ready" >> $GITHUB_STEP_SUMMARY
+          echo "- **Target Hostinger:** \`public_html\`" >> $GITHUB_STEP_SUMMARY
+          echo "Hasil build di folder \`dist/\` telah diverifikasi dan siap disajikan di Hostinger." >> $GITHUB_STEP_SUMMARY

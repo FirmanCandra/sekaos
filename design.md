@@ -6,88 +6,67 @@
 | Metadata | Rincian |
 | :--- | :--- |
 | **Proyek** | Sekaos Project (Landing Page, Dynamic Catalog, Admin Panel) |
-| **Target Platform** | Hostinger Premium Web Hosting (`public_html` / LiteSpeed / PHP 8.x / MySQL) |
+| **Target Platform** | Hostinger Premium Web Hosting (`public_html` / Static React Export) |
+| **Tech Stack** | **Frontend**: React (Vite) + Vanilla/Modern CSS<br>**Backend / BaaS**: Supabase (PostgreSQL, Storage CDN, Auth)<br>**Hosting Server**: LiteSpeed Hostinger (Static CDN Mode, 0% Server Load) |
 | **Dokumen Terkait** | [PRD.md](file:///c:/SMT%207/Sekaos/PRD.md) |
-| **Status Dokumen** | **Disetujui / Blueprint Implementasi** |
+| **Status Dokumen** | **Disetujui / Selesai Di-Setup** |
 | **Terakhir Diperbarui** | 3 Oktober 2026 |
 
 ---
 
-## 1. Analisis Lingkungan Hosting (Hostinger Ecosystem)
+## 1. Analisis Lingkungan Hosting (Hostinger + Supabase Ecosystem)
 
-Berdasarkan spesifikasi akun hosting klien pada Hostinger hPanel:
-- **Paket Hosting**: Premium Web Hosting.
-- **Web Server**: LiteSpeed Web Server dengan dukungan `.htaccess` & LiteSpeed Cache (LSCache).
-- **Runtime & Database**: PHP versi 8.1 / 8.2 / 8.3 dan MariaDB / MySQL Database via phpMyAdmin.
-- **Mekanisme Deployment**:
-  - Fitur **Git Deployment** otomatis dari remote Git repository ke direktori `public_html` (seperti yang sudah berjalan pada repositori `sebaris.id` di cabang `hosting`).
-  - Mendukung alternatif akses via **File Manager** dan **FTP/SFTP**.
-- **Karakteristik Resource**: RAM teralokasi sekitar 1 - 2 GB, CPU throttle limit CloudLinux LVE.
-
-### Keputusan Pemilihan Stack Teknologi (Architecture Decision)
-| Kriteria | Opsi A: Modern PHP 8.x + MySQL + Vanilla Modern JS (Dipilih) | Opsi B: Node.js / Next.js Fullstack |
-| :--- | :--- | :--- |
-| **Kompatibilitas Hostinger Shared** | **100% Native & Optimal**. Langsung berjalan tanpa setup PM2/Daemon. | Sering mengalami limitasi port, sleep mode, dan memori pada shared hosting. |
-| **Performa & Konsumsi Memori** | **Sangat Ringan (< 30 MB RAM)**. Waktu respon LiteSpeed sangat instan. | Konsumsi RAM tinggi (> 150 MB), risiko 503 Service Unavailable jika limit kena. |
-| **Kemudahan Maintenance Klien** | **Sangat Mudah**. Klien non-teknisi bisa backup database via phpMyAdmin. | Memerlukan rebuild script dan restart daemon server jika ada update. |
-| **Kecepatan Deployment Git** | **Instan**. Cukup `git pull` langsung aktif di `public_html`. | Memerlukan pipeline build (`npm install && npm run build`) di server. |
-
-> **Rekomendasi Arsitektur**: Menggunakan **Modern PHP 8.x (Clean MVC-style Architecture) + MySQL (PDO Prepared Statements) + Vanilla Modern CSS/JS** dengan template engine native yang rapi, cepat, dan modular.
+Berdasarkan analisis kebutuhan akun Hostinger klien (menampung 3 website sekaligus dalam 1 paket Premium Shared Hosting):
+- **Beban di Hostinger**: **0% (Zero Server/DB Load)**. Hostinger hanya bertindak sebagai *Static File Server* yang menyajikan bundle `dist/` (`index.html`, file bundle JS, CSS, video bumper, dan aset gambar). Tidak ada proses runtime Node.js atau MySQL yang membebani kuota RAM/disk shared hosting Anda.
+- **Supabase Cloud (BaaS)**:
+  - **Database PostgreSQL**: 500 MB (katalog pakaian konveksi hanya memerlukan ~2-5 MB).
+  - **Storage Bucket (`product-images`)**: 1 GB gratis untuk menyimpan foto produk konveksi dengan CDN global cepat.
+  - **Supabase Auth**: Autentikasi email & password bawaan untuk Admin Dashboard.
+  - **Row Level Security (RLS)**: Publik hanya dapat membaca (`SELECT`) data aktif, sedangkan penambahan/perubahan/penghapusan (`INSERT`, `UPDATE`, `DELETE`) dan upload foto hanya dapat dilakukan oleh Admin yang terautentikasi.
+- **Fallback Mock Storage**: Tersedia mode demo otomatis jika kredensial `.env` Supabase belum diisi, sehingga web dan panel admin tetap dapat langsung dijalankan dan diuji.
 
 ---
 
-## 2. Arsitektur Folder Proyek (Directory Structure)
-
-Struktur direktori dirancang agar bersih, memisahkan logika backend dan aset publik, serta dapat langsung di-deploy ke root `public_html` Hostinger:
+## 2. Arsitektur Folder Proyek (React + Vite + Supabase)
 
 ```text
 c:\SMT 7\Sekaos\
-├── .htaccess                   # URL rewrite, proteksi folder sensitif, LSCache header
-├── config/
-│   ├── database.php            # Koneksi database PDO terpusat (singleton)
-│   └── app.php                 # Konstanta URL dasar, nama web, dan environment
-├── database/
-│   ├── schema.sql              # Struktur tabel DDL lengkap
-│   └── seeders.sql             # Data awal katalog sample (PDH, Rompi, Kaos, dll)
-├── includes/
-│   ├── auth.php                # Middleware proteksi session admin & CSRF token
-│   ├── functions.php           # Helper: sanitasi XSS, auto-slug, uploader gambar WebP
-│   ├── header.php              # Header & navigasi publik yang dapat digunakan ulang
-│   └── footer.php              # Footer publik & modal inquiry
-├── assets/
-│   ├── css/
-│   │   ├── style.css           # Styling utama landing page (retained & enhanced)
-│   │   └── catalog.css         # Styling halaman katalog, filter badge & modal
-│   ├── js/
-│   │   ├── app.js              # Interaktivitas navbar, smooth scroll, video bumper
-│   │   └── catalog.js          # Live search katalog, filter kategori, auto-WA generator
-│   ├── images/
-│   │   ├── logo.jpeg           # Logo asli Sekaos Project
-│   │   ├── hero_bg.png         # Background hero asli
-│   │   ├── portfolio/          # 9 foto portofolio asli
-│   │   └── default-product.jpg # Placeholder fallback produk
-│   ├── uploads/                # Direktori penyimpanan foto produk admin
-│   │   └── .htaccess           # Proteksi: blokir eksekusi script PHP di folder upload
-│   └── videos/
-│       └── buatkan_vidio_bumper_yang_kere.mp4 # Video bumper resmi asli
-├── admin/                      # Portal Admin Dashboard
-│   ├── index.php               # Dashboard overview & metrik statistik ringkas
-│   ├── login.php               # Halaman login admin yang elegan
-│   ├── logout.php              # Script destroy session aman
-│   ├── products.php            # Tabel data produk (datatable interaktif)
-│   ├── product-create.php      # Form tambah produk baru + multi image upload
-│   ├── product-edit.php        # Form edit produk & status
-│   ├── product-delete.php      # Handler hapus produk (termasuk unlink file fisik)
-│   ├── categories.php          # CRUD kategori produk
-│   ├── settings.php            # Pengaturan nomor WA, template pesan, profil
-│   └── assets/
-│       ├── css/admin.css       # Styling dashboard bernuansa dark/modern professional
-│       └── js/admin.js         # Preview gambar live, konfirmasi dialog modal
-├── index.php                   # Landing Page utama (+ section Featured Catalog)
-├── katalog.php                 # Halaman Katalog Lengkap dengan Filter & Live Search
-├── detail-produk.php           # Halaman Detail Produk mandiri (SEO friendly)
-└── api/
-    └── products.php            # REST endpoint internal untuk live search AJAX
+├── .env                        # Kredensial Supabase lokal (VITE_SUPABASE_URL, ANON_KEY)
+├── .env.example                # Template konfigurasi environment
+├── supabase-schema.sql         # Skrip SQL lengkap untuk tabel, RLS, Storage & Seed data
+├── vite.config.js              # Konfigurasi bundler Vite
+├── package.json                # Dependensi proyek (React, Supabase JS, Lucide)
+├── index.html                  # HTML entry point dengan SEO & OpenGraph meta tags
+├── public/                     # Aset publik statis
+│   ├── .htaccess               # Rule rewrite SPA untuk Apache/LiteSpeed Hostinger
+│   ├── logo.jpeg               # Logo resmi Sekaos Project
+│   ├── hero_bg.png             # Background hero original
+│   ├── buatkan_vidio_bumper_yang_kere.mp4 # Video bumper resmi Sekaos
+│   └── portfolio/              # 9 foto portofolio asli (porto-1 s/d porto-9)
+├── src/
+│   ├── main.jsx                # React root mount
+│   ├── App.jsx                 # Komponen utama yang merangkum Landing Page & Admin
+│   ├── index.css               # Styling terpadu (Netlify original + catalog + admin)
+│   ├── lib/
+│   │   └── supabase.js         # Inisialisasi Supabase Client & fallback handler
+│   ├── data/
+│   │   └── initialData.js      # Mock seed data produk, kategori, dan pengaturan
+│   ├── services/
+│   │   └── dataService.js      # Abstraksi CRUD produk, upload gambar, dan session auth
+│   └── components/
+│       ├── Navbar.jsx          # Header navigasi responsif & logo
+│       ├── Hero.jsx            # Hero section dengan zoom animasi & WA CTA
+│       ├── VideoBumper.jsx     # Video bumper player resmi
+│       ├── ServicesSection.jsx # 10 Card layanan spesialis konveksi
+│       ├── CatalogSection.jsx  # Etalase katalog produk (filter pill + live search)
+│       ├── ProductModal.jsx    # Pop-up detail spesifikasi & pesan via WhatsApp
+│       ├── AdvantagesSection.jsx # 6 Keunggulan Sekaos Project
+│       ├── PortfolioSection.jsx # Grid 9 foto portofolio + lightbox preview
+│       ├── ContactSection.jsx  # Closing statement & CTA tombol WA / Instagram
+│       ├── MapSection.jsx      # Google Maps embed & overlay button
+│       ├── Footer.jsx          # Footer & link admin portal
+│       └── AdminDashboard.jsx  # Panel admin lengkap (stats, CRUD produk, settings)
+└── dist/                       # Output build siap di-upload ke public_html Hostinger
 ```
 
 ---
