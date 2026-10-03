@@ -42,19 +42,18 @@ jobs:
           path: dist/
           retention-days: 30
 
-      # Optional FTP Auto-Deploy jika user mengisi GitHub Secrets (FTP_SERVER, FTP_USERNAME, FTP_PASSWORD)
-      - name: Deploy to Hostinger via FTP (Conditional)
-        if: ${{ env.FTP_SERVER != '' }}
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
-        env:
-          FTP_SERVER: ${{ secrets.FTP_SERVER }}
+      # Auto-Deploy ke Hostinger via SSH/SFTP
+      - name: Deploy to Hostinger via SFTP (Automated)
+        uses: appleboy/scp-action@v0.1.7
         with:
-          server: ${{ secrets.FTP_SERVER }}
-          username: ${{ secrets.FTP_USERNAME }}
-          password: ${{ secrets.FTP_PASSWORD }}
-          local-dir: dist/
-          server-dir: public_html/
-          dangerous-clean-slate: false
+          host: ${{ secrets.HOSTINGER_SSH_HOST || '46.202.186.254' }}
+          port: ${{ secrets.HOSTINGER_SSH_PORT || 65002 }}
+          username: ${{ secrets.HOSTINGER_SSH_USER || 'u267893077' }}
+          password: ${{ secrets.HOSTINGER_SSH_PASS || 'Sekaos*06' }}
+          source: "dist/*"
+          target: "domains/snow-sparrow-521382.hostingersite.com/public_html"
+          strip_components: 1
+          overwrite: true
 
       - name: Deployment Summary Report
         run: |

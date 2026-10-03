@@ -63,3 +63,20 @@ Repositori ini memiliki 2 cabang utama:
 - **Zero-Error Build**: Dilarang melakukan push jika `npm run build` menghasilkan error.
 - **Sensitivitas Kredensial**: File `.env` TIDAK BOLEH di-push ke GitHub. Hanya template `.env.example` yang boleh di-commit.
 - **Aset & Hostinger Optimization**: Seluruh aset di folder `public/` (video, logo, gambar) dan file `public/.htaccess` harus terjaga agar routing SPA di LiteSpeed Hostinger tidak rusak.
+
+---
+
+## 4. Aturan Wajib Deployment Hostinger (Hostinger Deployment Rule)
+
+> [!CAUTION]
+> **DILARANG meletakkan raw source code JSX (`src/`, `package.json`, root `index.html`) langsung ke `public_html` Hostinger.** Web server Apache/LiteSpeed di shared hosting Hostinger tidak menjalankan Node.js dev server, sehingga raw JSX akan menyebabkan tampilan *blank putih* bagi pengunjung.
+
+### Prosedur Deployment:
+1. Pastikan seluruh perubahan kode telah di-build: `npm run build`.
+2. Untuk men-deploy pembaruan ke server live Hostinger, jalankan perintah otomatis:
+   ```bash
+   npm run deploy
+   ```
+3. Skrip ini secara otomatis mem-build bundle teroptimasi dan mengunggah isi folder `dist/` ke direktori target: `domains/snow-sparrow-521382.hostingersite.com/public_html` via SFTP SSH (`46.202.186.254:65002`).
+4. Verifikasi selalu status HTTP 200 pada domain [snow-sparrow-521382.hostingersite.com](https://snow-sparrow-521382.hostingersite.com/).
+

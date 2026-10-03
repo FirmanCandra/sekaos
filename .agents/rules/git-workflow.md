@@ -13,3 +13,6 @@ Berlaku untuk semua task pembaruan kode, bug fixing, pembuatan fitur, dan dokume
    - Jangan pernah menyertakan file `.env` atau token privat ke dalam commit.
 4. **CI/CD Compliance**:
    - Pastikan perubahan mematuhi alur GitHub Actions yang didefinisikan di `.github/workflows/`.
+5. **Hostinger Production Deployment**:
+   - Dilarang mengunggah raw code JSX ke `public_html`.
+   - Gunakan `npm run deploy` untuk mengompilasi dan mengunggah folder `dist/` ke Hostinger via SFTP SSH (`46.202.186.254:65002`). Detail konfigurasi lengkap terdapat di `HOSTINGER.md`.
