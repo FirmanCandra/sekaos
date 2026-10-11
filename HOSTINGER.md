@@ -60,9 +60,9 @@ Buka file `public/api/config.php` dan sesuaikan nama DB, user, dan password:
 
 ```php
 define('DB_HOST', 'localhost');
-define('DB_NAME', 'u267893077_sekaos'); // sesuaikan dengan nama DB di hPanel
-define('DB_USER', 'u267893077_admin');  // sesuaikan dengan username di hPanel
-define('DB_PASS', 'Sekaos*06');          // sesuaikan dengan password DB Anda
+define('DB_NAME', 'u267893077_sekaos'); // nama database di hPanel
+define('DB_USER', 'u267893077_sekaos'); // user database di hPanel
+define('DB_PASS', 'Sekaos*06');          // password database Hostinger
 ```
 
 > **Akun Login Admin Default:**

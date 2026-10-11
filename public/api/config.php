@@ -13,8 +13,8 @@ define('DB_PORT', getenv('DB_PORT') ?: '3306');
 // Nama Database yang dibuat di hPanel Hostinger (contoh: u267893077_sekaos)
 define('DB_NAME', getenv('DB_NAME') ?: 'u267893077_sekaos');
 
-// Username Database MySQL Hostinger (contoh: u267893077_admin)
-define('DB_USER', getenv('DB_USER') ?: 'u267893077_admin');
+// Username Database MySQL Hostinger
+define('DB_USER', getenv('DB_USER') ?: 'u267893077_sekaos');
 
 // Password Database MySQL Hostinger
 define('DB_PASS', getenv('DB_PASS') ?: 'Sekaos*06');
