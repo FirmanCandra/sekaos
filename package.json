@@ -8,7 +8,7 @@
     "build": "vite build",
     "lint": "oxlint",
     "preview": "vite preview",
-    "deploy": "python scripts/deploy.py"
+    "deploy": "python scripts/release_production.py"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.117.2",
