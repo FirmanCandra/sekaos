@@ -256,7 +256,7 @@ export default function AdminDashboard({
                 required
                 value={loginEmail}
                 onChange={(e) => setLoginEmail(e.target.value)}
-                placeholder="admin@sekaos.com"
+                placeholder="nama@email.com"
                 style={{
                   width: '100%',
                   padding: '12px 16px',
@@ -279,7 +279,7 @@ export default function AdminDashboard({
                 required
                 value={loginPassword}
                 onChange={(e) => setLoginPassword(e.target.value)}
-                placeholder="••••••••"
+                placeholder="Masukkan kata sandi..."
                 style={{
                   width: '100%',
                   padding: '12px 16px',

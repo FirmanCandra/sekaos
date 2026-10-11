@@ -21,6 +21,13 @@ PASS = 'Setiket*06'
 REMOTE_PATH = 'domains/snow-sparrow-521382.hostingersite.com/public_html'
 LIVE_URL = 'https://snow-sparrow-521382.hostingersite.com/'
 
+if sys.platform == 'win32':
+    try:
+        sys.stdout.reconfigure(encoding='utf-8')
+        sys.stderr.reconfigure(encoding='utf-8')
+    except Exception:
+        pass
+
 def run_cmd(cmd, check=True):
     res = subprocess.run(cmd, shell=True, capture_output=True, text=True)
     if check and res.returncode != 0:
@@ -63,25 +70,30 @@ def push_production():
     print("[SUCCESS] Branch 'production' berhasil di-push ke GitHub!")
 
 def sync_hostinger():
-    print(f"[4/5] Sinkronisasi ke Hostinger SSH ({HOST}:{PORT})...")
+    print(f"[4/5] Mengunggah pembaruan ke Hostinger SFTP ({HOST}:{PORT})...")
     client = paramiko.SSHClient()
     client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
     try:
         client.connect(HOST, port=PORT, username=USER, password=PASS, timeout=20)
+        sftp = client.open_sftp()
         
-        # Di Hostinger public_html: fetch dan reset ke origin/production
-        remote_cmd = f"cd {REMOTE_PATH} && git fetch origin production && git reset --hard origin/production && git clean -fd"
-        stdin, stdout, stderr = client.exec_command(remote_cmd)
-        out = stdout.read().decode('utf-8')
-        err = stderr.read().decode('utf-8')
-        print("[HOSTINGER GIT SYNC]:")
-        if out: print(out.strip())
-        if err: print(err.strip())
-        
+        for root, dirs, files in os.walk('dist'):
+            rel_path = os.path.relpath(root, 'dist')
+            dest_dir = REMOTE_PATH if rel_path == '.' else os.path.join(REMOTE_PATH, rel_path).replace('\\', '/')
+            try:
+                sftp.mkdir(dest_dir)
+            except IOError:
+                pass
+            for file in files:
+                src = os.path.join(root, file)
+                dst = os.path.join(dest_dir, file).replace('\\', '/')
+                sftp.put(src, dst)
+                
+        sftp.close()
         client.close()
-        print("[SUCCESS] Server Hostinger berhasil disinkronkan ke rilis produksi!")
+        print("[SUCCESS] Berhasil sinkronisasi aset langsung ke Hostinger!")
     except Exception as e:
-        print(f"[WARNING] Gagal sinkronisasi SSH langsung: {e}. Hostinger webhook akan otomatis menarik perubahan.")
+        print(f"[WARNING] SFTP langsung: {e}. Hostinger Git webhook akan otomatis menarik perubahan.")
 
 def verify():
     print(f"[5/5] Verifikasi live status di {LIVE_URL}...")
