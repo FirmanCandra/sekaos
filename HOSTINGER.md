@@ -12,9 +12,12 @@ Dokumen ini berisi spesifikasi server, kredensial akses, arsitektur hosting, pan
 | **SSH Host** | `46.202.186.254` |
 | **SSH Port** | `65002` |
 | **SSH Username** | `u267893077` |
+| **SSH Password** | `Setiket*06` |
 | **Target Directory** | `domains/snow-sparrow-521382.hostingersite.com/public_html` |
 | **Backend & API** | Native PHP 8.x REST API (`public/api/`) |
 | **Database Server** | MySQL / MariaDB Hostinger (`localhost:3306`) |
+| **Database Name & User** | `u267893077_sekaos` |
+| **Database Password** | `Sekaos*06` |
 | **Storage Uploads** | Hostinger Storage (`public_html/uploads/`) |
 | **Schema SQL** | [mysql-schema.sql](file:///c:/SMT%207/Sekaos/mysql-schema.sql) |
 

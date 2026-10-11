@@ -21,13 +21,13 @@ if sys.platform == 'win32':
 HOST = '46.202.186.254'
 PORT = 65002
 USER = 'u267893077'
-PASS = 'Sekaos*06'
+PASS = 'Setiket*06'
 REMOTE_PATH = 'domains/snow-sparrow-521382.hostingersite.com/public_html'
 LOCAL_PATH = 'dist'
 LIVE_URL = 'https://snow-sparrow-521382.hostingersite.com/'
 
 def run_build():
-    print("[1/3] Menjalankan 'npm run build'...")
+    print("[1/4] Menjalankan 'npm run build'...")
     cmd = 'npm.cmd run build' if os.name == 'nt' else 'npm run build'
     res = subprocess.run(cmd, shell=True)
     if res.returncode != 0:
@@ -36,12 +36,20 @@ def run_build():
     print("[SUCCESS] Build berhasil!")
 
 def deploy():
-    print(f"[2/3] Menghubungkan ke Hostinger SSH ({HOST}:{PORT})...")
+    print(f"[2/4] Menghubungkan ke Hostinger SSH ({HOST}:{PORT})...")
     client = paramiko.SSHClient()
     client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
     
     try:
         client.connect(HOST, port=PORT, username=USER, password=PASS, timeout=20)
+        print("[SUCCESS] Terhubung ke Hostinger SSH!")
+
+        # Bersihkan raw JSX / dev files jika ada
+        print("[3/4] Membersihkan raw dev files di server...")
+        cleanup_cmd = f"rm -rf {REMOTE_PATH}/src {REMOTE_PATH}/package.json {REMOTE_PATH}/package-lock.json {REMOTE_PATH}/vite.config.js {REMOTE_PATH}/*.md {REMOTE_PATH}/*.sql {REMOTE_PATH}/.oxlintrc.json"
+        stdin, stdout, stderr = client.exec_command(cleanup_cmd)
+        stdout.channel.recv_exit_status()
+
         sftp = client.open_sftp()
         print("[SUCCESS] Terhubung ke Hostinger SFTP!")
 
@@ -52,7 +60,7 @@ def deploy():
             print(f"[INFO] Membuat direktori {REMOTE_PATH}...")
             sftp.mkdir(REMOTE_PATH)
 
-        print(f"[3/3] Mengunggah aset terkompilasi dari '{LOCAL_PATH}' ke '{REMOTE_PATH}'...")
+        print(f"[4/4] Mengunggah aset terkompilasi dari '{LOCAL_PATH}' ke '{REMOTE_PATH}'...")
         total_files = 0
         for root, dirs, files in os.walk(LOCAL_PATH):
             rel_path = os.path.relpath(root, LOCAL_PATH)
