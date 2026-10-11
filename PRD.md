@@ -8,7 +8,7 @@
 | **Nama Proyek** | Sekaos Project Web Reconstruction & Catalog Enhancement |
 | **Klien** | SEKAOS PROJECT (Vendor Konveksi & Sablon Semarang) |
 | **Target Hosting** | Hostinger Premium Web Hosting (`public_html` / Static React Export) |
-| **Tech Stack** | **Frontend**: React (Vite) + Vanilla/Modern CSS<br>**Backend/BaaS**: Supabase (PostgreSQL, Storage CDN, Auth)<br>**Deployment**: Git / Build `dist/` ke Hostinger |
+| **Tech Stack** | **Frontend**: React (Vite) + Vanilla/Modern CSS<br>**Backend**: Native PHP 8 REST API (PDO)<br>**Database**: MySQL / MariaDB Hostinger<br>**Storage**: Hostinger Web Storage (`uploads/`)<br>**Deployment**: Git / Build `dist/` ke Hostinger |
 | **Sumber Referensi** | [sekaosproject.netlify.app](https://sekaosproject.netlify.app/) |
 | **Dokumen Terkait** | [design.md](file:///c:/SMT%207/Sekaos/design.md) |
 | **Status Dokumen** | **Disetujui / Selesai Di-Setup** |

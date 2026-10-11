@@ -7,7 +7,6 @@ import {
   deleteProduct,
   saveSettings
 } from '../services/dataService';
-import { isSupabaseConfigured } from '../lib/supabase';
 
 export default function AdminDashboard({
   onClose,
@@ -305,40 +304,38 @@ export default function AdminDashboard({
           </form>
 
           {/* Quick Demo Fill Helper */}
-          {!isSupabaseConfigured && (
-            <div
+          <div
+            style={{
+              marginTop: '25px',
+              padding: '12px',
+              backgroundColor: 'rgba(56, 189, 248, 0.1)',
+              border: '1px dashed #38bdf8',
+              borderRadius: '10px',
+              textAlign: 'center'
+            }}
+          >
+            <p style={{ fontSize: '0.8rem', color: '#7dd3fc', marginBottom: '8px' }}>
+              Akun Admin Default (Hostinger MySQL / Demo):
+            </p>
+            <button
+              type="button"
+              onClick={() => {
+                setLoginEmail('admin@sekaos.com');
+                setLoginPassword('admin123');
+              }}
               style={{
-                marginTop: '25px',
-                padding: '12px',
-                backgroundColor: 'rgba(56, 189, 248, 0.1)',
-                border: '1px dashed #38bdf8',
-                borderRadius: '10px',
-                textAlign: 'center'
+                background: '#0284c7',
+                border: 'none',
+                color: '#fff',
+                padding: '6px 14px',
+                borderRadius: '6px',
+                fontSize: '0.8rem',
+                cursor: 'pointer'
               }}
             >
-              <p style={{ fontSize: '0.8rem', color: '#7dd3fc', marginBottom: '8px' }}>
-                Mode Demo Lokal Aktif (Tanpa Supabase)
-              </p>
-              <button
-                type="button"
-                onClick={() => {
-                  setLoginEmail('admin@sekaos.com');
-                  setLoginPassword('admin123');
-                }}
-                style={{
-                  background: '#0284c7',
-                  border: 'none',
-                  color: '#fff',
-                  padding: '6px 14px',
-                  borderRadius: '6px',
-                  fontSize: '0.8rem',
-                  cursor: 'pointer'
-                }}
-              >
-                Gunakan Akun Demo
-              </button>
-            </div>
-          )}
+              Isi Otomatis (admin@sekaos.com / admin123)
+            </button>
+          </div>
 
           <div style={{ textAlign: 'center', marginTop: '20px' }}>
             <button
@@ -363,8 +360,8 @@ export default function AdminDashboard({
           <img src="/logo.png" alt="Logo" style={{ height: '42px', width: 'auto' }} />
           <div>
             <h2>SEKAOS PANEL</h2>
-            <span style={{ fontSize: '0.75rem', color: '#38bdf8', fontWeight: 600 }}>
-              {isSupabaseConfigured ? '● Supabase Cloud' : '● Local Demo Mode'}
+            <span style={{ fontSize: '0.75rem', color: '#34d399', fontWeight: 600 }}>
+              ● Hostinger MySQL Database
             </span>
           </div>
         </div>

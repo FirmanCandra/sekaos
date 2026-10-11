@@ -15,6 +15,12 @@
   RewriteRule ^ index.html [L]
 </IfModule>
 
+# Proteksi file konfigurasi sensitif
+<FilesMatch "^(config\.php|\.env|.*\.sql)$">
+  Order allow,deny
+  Deny from all
+</FilesMatch>
+
 # Browser Caching untuk Aset Statis
 <IfModule mod_expires.c>
   ExpiresActive On
