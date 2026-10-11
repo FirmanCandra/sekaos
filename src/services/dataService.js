@@ -267,14 +267,7 @@ export async function adminLogin(email, password) {
       return res.user;
     }
   } catch (err) {
-    // Jika server offline / mode demo lokal
-    if (email === 'admin@sekaos.com' && password === 'admin123') {
-      const mockUser = { email, role: 'admin', full_name: 'Administrator Sekaos (Offline Mode)' };
-      setAuthToken('demo_mock_token_local');
-      setLocal(LOCAL_STORAGE_KEY_AUTH, mockUser);
-      return mockUser;
-    }
-    throw new Error(err.message || 'Email atau password salah');
+    throw new Error(err.message || 'Email atau kata sandi salah');
   }
 
   throw new Error('Gagal melakukan autentikasi admin');

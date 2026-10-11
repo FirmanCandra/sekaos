@@ -67,7 +67,7 @@ function handleLogin() {
     }
 
     if (!$authenticated) {
-        errorResponse('Email atau password admin salah. (Default: admin@sekaos.com / admin123)', 401);
+        errorResponse('Email atau kata sandi yang Anda masukkan salah.', 401);
     }
 
     // Buat token autentikasi 7 hari

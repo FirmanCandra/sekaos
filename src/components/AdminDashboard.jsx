@@ -303,40 +303,6 @@ export default function AdminDashboard({
             </button>
           </form>
 
-          {/* Quick Demo Fill Helper */}
-          <div
-            style={{
-              marginTop: '25px',
-              padding: '12px',
-              backgroundColor: 'rgba(56, 189, 248, 0.1)',
-              border: '1px dashed #38bdf8',
-              borderRadius: '10px',
-              textAlign: 'center'
-            }}
-          >
-            <p style={{ fontSize: '0.8rem', color: '#7dd3fc', marginBottom: '8px' }}>
-              Akun Admin Default (Hostinger MySQL / Demo):
-            </p>
-            <button
-              type="button"
-              onClick={() => {
-                setLoginEmail('admin@sekaos.com');
-                setLoginPassword('admin123');
-              }}
-              style={{
-                background: '#0284c7',
-                border: 'none',
-                color: '#fff',
-                padding: '6px 14px',
-                borderRadius: '6px',
-                fontSize: '0.8rem',
-                cursor: 'pointer'
-              }}
-            >
-              Isi Otomatis (admin@sekaos.com / admin123)
-            </button>
-          </div>
-
           <div style={{ textAlign: 'center', marginTop: '20px' }}>
             <button
               type="button"
